@@ -6,7 +6,7 @@ use nu_protocol::{
 use rand::prelude::SliceRandom;
 use rand::thread_rng;
 
-use super::util::get_runtime;
+use super::util::tokio_block;
 
 #[derive(Clone)]
 pub struct Ioxshuffle;
@@ -31,6 +31,8 @@ impl Command for Ioxshuffle {
         _call: &Call,
         input: PipelineData,
     ) -> Result<PipelineData, ShellError> {
+        let _ = tokio_block();
+
         let metadata = input.metadata();
         let mut v: Vec<_> = input.into_iter().collect();
         v.shuffle(&mut thread_rng());

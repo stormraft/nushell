@@ -1,5 +1,26 @@
 use tokio::runtime::{Builder, Runtime};
 
+pub fn tokio_block() -> Result<(), std::io::Error> {
+    use influxdb_iox_client::{connection::Builder, health::Client};
+
+    let num_threads: Option<usize> = None;
+
+    let tokio_runtime = get_runtime(num_threads)?;
+    tokio_runtime.block_on(async move {
+        let connection = Builder::default()
+            .build("http://127.0.0.1:8082")
+            .await
+            .unwrap();
+
+        let mut client = Client::new(connection);
+
+        let x = client.check_storage().await.expect("check_storage failure");
+        println!("{:?}", x);
+    });
+
+    Ok(())
+}
+
 /// Creates the tokio runtime for executing IOx
 ///
 /// if nthreads is none, uses the default scheduler
