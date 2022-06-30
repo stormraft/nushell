@@ -395,6 +395,11 @@ pub fn create_default_context(cwd: impl AsRef<Path>) -> EngineState {
             IsAdmin,
         };
 
+        // Iox
+        bind_command! {
+            Ioxlength,
+        }
+
         // Deprecated
         bind_command! {
             PivotDeprecated,
