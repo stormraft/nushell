@@ -9,15 +9,15 @@ use rand::thread_rng;
 use super::util::tokio_block02;
 
 #[derive(Clone)]
-pub struct Ioxshuffle;
+pub struct Ioxsql;
 
-impl Command for Ioxshuffle {
+impl Command for Ioxsql {
     fn name(&self) -> &str {
-        "ioxshuffle"
+        "ioxsql"
     }
 
     fn signature(&self) -> nu_protocol::Signature {
-        Signature::build("ioxshuffle").category(Category::Filters)
+        Signature::build("ioxsql").category(Category::Filters)
     }
 
     fn usage(&self) -> &str {
