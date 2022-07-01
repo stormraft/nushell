@@ -21,7 +21,7 @@ impl Command for Ioxsql {
     }
 
     fn usage(&self) -> &str {
-        "Shuffle rows randomly."
+        "Sql query against the Iox Database."
     }
 
     fn run(
