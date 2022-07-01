@@ -1,12 +1,14 @@
+use nu_engine::CallExt;
 use nu_protocol::ast::Call;
 use nu_protocol::engine::{Command, EngineState, Stack};
 use nu_protocol::{
-    Category, Example, IntoInterruptiblePipelineData, PipelineData, ShellError, Signature,
+    Category, Example, IntoInterruptiblePipelineData, PipelineData, ShellError, Signature, Spanned,
+    SyntaxShape,
 };
 use rand::prelude::SliceRandom;
 use rand::thread_rng;
 
-use super::util::tokio_block02;
+use super::util::tokio_block03;
 
 #[derive(Clone)]
 pub struct Ioxsql;
@@ -17,7 +19,13 @@ impl Command for Ioxsql {
     }
 
     fn signature(&self) -> nu_protocol::Signature {
-        Signature::build("ioxsql").category(Category::Filters)
+        Signature::build("ioxsql")
+            .required(
+                "query",
+                SyntaxShape::String,
+                "SQL to execute against the database",
+            )
+            .category(Category::Filters)
     }
 
     fn usage(&self) -> &str {
@@ -27,11 +35,12 @@ impl Command for Ioxsql {
     fn run(
         &self,
         engine_state: &EngineState,
-        _stack: &mut Stack,
-        _call: &Call,
+        stack: &mut Stack,
+        call: &Call,
         input: PipelineData,
     ) -> Result<PipelineData, ShellError> {
-        let _ = tokio_block02();
+        let sql: Spanned<String> = call.req(engine_state, stack, 0)?;
+        let _ = tokio_block03(&sql);
 
         let metadata = input.metadata();
         let mut v: Vec<_> = input.into_iter().collect();
