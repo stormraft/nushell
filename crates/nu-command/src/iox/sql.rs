@@ -8,7 +8,6 @@ use nu_protocol::{
 };
 use rand::prelude::SliceRandom;
 use rand::thread_rng;
-//use tokio::runtime::{Builder, Runtime};
 
 #[derive(Clone)]
 pub struct Ioxsql;
