@@ -1,17 +1,9 @@
 use nu_protocol::Spanned;
 use tokio::runtime::{Builder, Runtime};
 
-pub fn tokio_block03(sql: &Spanned<String>) -> Result<(), std::io::Error> {
-    use influxdb_iox_client::{
-        connection::Builder,
-        //      flight::{generated_types::ReadInfo, Client},
-        repl::Repl,
-    };
-
-    //use influxdb_iox_client::{connection::Builder, repl::Repl};
-
+pub fn tokio_block_sql(sql: &Spanned<String>) -> Result<(), std::io::Error> {
+    use influxdb_iox_client::{connection::Builder, repl::Repl};
     let num_threads: Option<usize> = None;
-
     let tokio_runtime = get_runtime(num_threads)?;
 
     tokio_runtime.block_on(async move {
@@ -25,10 +17,9 @@ pub fn tokio_block03(sql: &Spanned<String>) -> Result<(), std::io::Error> {
         let dbname = std::env::var("INFLUXDB_IOX_CATALOG_DSN").unwrap();
 
         repl.use_database(dbname);
-
         // repl.use_database("postgresql:///iox_shared".to_string());
 
-        // let _output_format = repl.set_output_format("csv");
+        let _output_format = repl.set_output_format("csv");
 
         let x = repl
             //.run_sql("select * from h2o_temperature".to_string())
@@ -37,28 +28,6 @@ pub fn tokio_block03(sql: &Spanned<String>) -> Result<(), std::io::Error> {
             .expect("run_sql");
 
         println!("{:?}", x);
-
-        /*
-              let mut client = Client::new(connection);
-
-              let mut query_results = client
-                  .perform_query(ReadInfo {
-                      namespace_name: "postgresql:///iox_shared".to_string(),
-                      //sql_query: "select * from h2o_temperature".to_string(),
-                      sql_query: sql.item.to_string(),
-                  })
-                  .await
-                  .expect("query request should work");
-
-              let mut batches = vec![];
-
-              while let Some(data) = query_results.next().await.expect("valid batches") {
-                  batches.push(data);
-              }
-
-              println!("{:?}", batches);
-
-        */
     });
 
     Ok(())

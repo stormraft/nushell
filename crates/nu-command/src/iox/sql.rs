@@ -8,7 +8,7 @@ use nu_protocol::{
 use rand::prelude::SliceRandom;
 use rand::thread_rng;
 
-use super::util::tokio_block03;
+use super::util::tokio_block_sql;
 
 #[derive(Clone)]
 pub struct Ioxsql;
@@ -40,7 +40,7 @@ impl Command for Ioxsql {
         input: PipelineData,
     ) -> Result<PipelineData, ShellError> {
         let sql: Spanned<String> = call.req(engine_state, stack, 0)?;
-        let _ = tokio_block03(&sql);
+        let _ = tokio_block_sql(&sql);
 
         let metadata = input.metadata();
         let mut v: Vec<_> = input.into_iter().collect();
