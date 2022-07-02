@@ -2,12 +2,12 @@ use super::util::get_runtime;
 use nu_engine::CallExt;
 use nu_protocol::ast::Call;
 use nu_protocol::engine::{Command, EngineState, Stack};
+//use nu_protocol::IntoInterruptiblePipelineData;
 use nu_protocol::{
-    Category, Example, IntoInterruptiblePipelineData, PipelineData, ShellError, Signature, Spanned,
-    SyntaxShape,
+    Category, Example, PipelineData, ShellError, Signature, Spanned, SyntaxShape, Value,
 };
-use rand::prelude::SliceRandom;
-use rand::thread_rng;
+//use rand::prelude::SliceRandom;
+//use rand::thread_rng;
 
 #[derive(Clone)]
 pub struct Ioxsql;
@@ -36,18 +36,15 @@ impl Command for Ioxsql {
         engine_state: &EngineState,
         stack: &mut Stack,
         call: &Call,
-        input: PipelineData,
+        _input: PipelineData,
     ) -> Result<PipelineData, ShellError> {
         let sql: Spanned<String> = call.req(engine_state, stack, 0)?;
         let _ = tokio_block_sql(&sql);
 
-        let metadata = input.metadata();
-        let mut v: Vec<_> = input.into_iter().collect();
-        v.shuffle(&mut thread_rng());
-        let iter = v.into_iter();
-        Ok(iter
-            .into_pipeline_data(engine_state.ctrlc.clone())
-            .set_metadata(metadata))
+        Ok(PipelineData::Value(
+            Value::Nothing { span: call.head },
+            None,
+        ))
     }
 
     fn examples(&self) -> Vec<Example> {

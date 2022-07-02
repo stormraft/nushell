@@ -125,6 +125,14 @@ fn from_csv(
 
     let trim = trim_from_str(trim)?;
 
+    println!("noheaders = {:?}", noheaders);
+    println!("no_infer = {:?}", no_infer);
+    println!("sep = {:?}", sep);
+    println!("trim = {:?}", trim);
+    println!("input = {:?}", input);
+    println!("name = {:?}", name);
+    //println!("config = {:?}", config);
+
     from_delimited_data(noheaders, no_infer, sep, trim, input, name, config)
 }
 
