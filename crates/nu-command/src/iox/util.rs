@@ -4,8 +4,11 @@ use tokio::runtime::{Builder, Runtime};
 pub fn tokio_block03(sql: &Spanned<String>) -> Result<(), std::io::Error> {
     use influxdb_iox_client::{
         connection::Builder,
-        flight::{generated_types::ReadInfo, Client},
+        //      flight::{generated_types::ReadInfo, Client},
+        repl::Repl,
     };
+
+    //use influxdb_iox_client::{connection::Builder, repl::Repl};
 
     let num_threads: Option<usize> = None;
 
@@ -17,24 +20,45 @@ pub fn tokio_block03(sql: &Spanned<String>) -> Result<(), std::io::Error> {
             .await
             .expect("client should be valid");
 
-        let mut client = Client::new(connection);
+        let mut repl = Repl::new(connection);
 
-        let mut query_results = client
-            .perform_query(ReadInfo {
-                namespace_name: "postgresql:///iox_shared".to_string(),
-                //sql_query: "select * from h2o_temperature".to_string(),
-                sql_query: sql.item.to_string(),
-            })
+        let dbname = std::env::var("INFLUXDB_IOX_CATALOG_DSN").unwrap();
+
+        repl.use_database(dbname);
+
+        // repl.use_database("postgresql:///iox_shared".to_string());
+
+        // let _output_format = repl.set_output_format("csv");
+
+        let x = repl
+            //.run_sql("select * from h2o_temperature".to_string())
+            .run_sql(sql.item.to_string())
             .await
-            .expect("query request should work");
+            .expect("run_sql");
 
-        let mut batches = vec![];
+        println!("{:?}", x);
 
-        while let Some(data) = query_results.next().await.expect("valid batches") {
-            batches.push(data);
-        }
+        /*
+              let mut client = Client::new(connection);
 
-        println!("{:?}", batches);
+              let mut query_results = client
+                  .perform_query(ReadInfo {
+                      namespace_name: "postgresql:///iox_shared".to_string(),
+                      //sql_query: "select * from h2o_temperature".to_string(),
+                      sql_query: sql.item.to_string(),
+                  })
+                  .await
+                  .expect("query request should work");
+
+              let mut batches = vec![];
+
+              while let Some(data) = query_results.next().await.expect("valid batches") {
+                  batches.push(data);
+              }
+
+              println!("{:?}", batches);
+
+        */
     });
 
     Ok(())
