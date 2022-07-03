@@ -19,7 +19,7 @@ impl Command for Buffle {
     }
 
     fn usage(&self) -> &str {
-        "Shuffle rows randomly."
+        "Buffle rows randomly."
     }
 
     fn run(

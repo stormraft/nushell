@@ -2596,6 +2596,7 @@ dependencies = [
  "notify",
  "nu-ansi-term",
  "nu-color-config",
+ "nu-crate",
  "nu-engine",
  "nu-glob",
  "nu-json",

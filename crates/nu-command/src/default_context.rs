@@ -3,6 +3,7 @@ use nu_protocol::engine::{EngineState, StateWorkingSet};
 use std::path::Path;
 
 use crate::*;
+use nu_crate::*;
 
 pub fn create_default_context(cwd: impl AsRef<Path>) -> EngineState {
     let mut engine_state = EngineState::new();
@@ -15,6 +16,8 @@ pub fn create_default_context(cwd: impl AsRef<Path>) -> EngineState {
                 $( working_set.add_decl(Box::new($command)); )*
             };
         }
+
+        add_client_decls(&mut working_set);
 
         // If there are commands that have the same name as default declarations,
         // they have to be registered before the main declarations. This helps to make
