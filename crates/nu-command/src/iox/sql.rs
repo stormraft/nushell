@@ -39,7 +39,9 @@ impl Command for Ioxsql {
         _input: PipelineData,
     ) -> Result<PipelineData, ShellError> {
         let sql: Spanned<String> = call.req(engine_state, stack, 0)?;
-        let _ = tokio_block_sql(&sql);
+        let sql_result = tokio_block_sql(&sql);
+
+        println!("{:?}", sql_result);
 
         Ok(PipelineData::Value(
             Value::Nothing { span: call.head },
@@ -56,12 +58,12 @@ impl Command for Ioxsql {
     }
 }
 
-pub fn tokio_block_sql(sql: &Spanned<String>) -> Result<(), std::io::Error> {
+pub fn tokio_block_sql(sql: &Spanned<String>) -> Result<String, std::io::Error> {
     use influxdb_iox_client::{connection::Builder, repl::Repl};
     let num_threads: Option<usize> = None;
     let tokio_runtime = get_runtime(num_threads)?;
 
-    tokio_runtime.block_on(async move {
+    let sql_result = tokio_runtime.block_on(async move {
         let connection = Builder::default()
             .build("http://127.0.0.1:8082")
             .await
@@ -82,8 +84,9 @@ pub fn tokio_block_sql(sql: &Spanned<String>) -> Result<(), std::io::Error> {
             .await
             .expect("run_sql");
 
-        println!("{:?}", x);
+        // println!("{:?}", x);
+        x
     });
 
-    Ok(())
+    Ok(sql_result)
 }
