@@ -29,6 +29,7 @@ members = [
 	"crates/nu_plugin_example",
 	"crates/nu_plugin_query",
 	"crates/nu-utils",
+	"crates/nu-crate",
 ]
 
 [dependencies]
