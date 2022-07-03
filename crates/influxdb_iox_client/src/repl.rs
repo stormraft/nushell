@@ -178,7 +178,7 @@ impl Repl {
         self.output_format = requested_format
             .parse()
             .context(SettingFormatSnafu { requested_format })?;
-        println!("Set output format format to {}", self.output_format);
+        println!("Set output format to {}", self.output_format);
         Ok(())
     }
 
@@ -188,7 +188,7 @@ impl Repl {
             .output_format
             .format(batches)
             .context(FormattingResultsSnafu)?;
-        println!("{}", formatted_results);
+        //println!("{}", formatted_results);
         Ok(formatted_results)
     }
 

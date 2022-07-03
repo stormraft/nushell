@@ -44,7 +44,7 @@ impl Command for Ioxsql {
         let sql: Spanned<String> = call.req(engine_state, stack, 0)?;
         let sql_result = tokio_block_sql(&sql);
 
-        println!("{:?}", sql_result);
+        // println!("{:?}", sql_result);
 
         let no_infer = false;
         let noheaders = false;
