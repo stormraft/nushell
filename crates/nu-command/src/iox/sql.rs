@@ -57,11 +57,21 @@ impl Command for Ioxsql {
 
         let input = PipelineData::Value(
             Value::String {
+                val: sql_result.unwrap(),
+                span: call.head,
+            },
+            None,
+        );
+
+        /* This works !!
+        let input = PipelineData::Value(
+            Value::String {
                 val: "a,b,c\n1,2,10\n3,4,20\n".to_string(),
                 span: call.head,
             },
             None,
         );
+        */
 
         // This compiles and returns nothing
         // let input = PipelineData::Value(Value::Nothing { span: call.head }, None);
