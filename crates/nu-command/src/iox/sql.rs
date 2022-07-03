@@ -4,10 +4,13 @@ use nu_protocol::ast::Call;
 use nu_protocol::engine::{Command, EngineState, Stack};
 //use nu_protocol::IntoInterruptiblePipelineData;
 use nu_protocol::{
-    Category, Example, PipelineData, ShellError, Signature, Spanned, SyntaxShape, Value,
+    Category, Example, PipelineData, ShellError, Signature, Span, Spanned, SyntaxShape, Value,
 };
 //use rand::prelude::SliceRandom;
 //use rand::thread_rng;
+use super::delimited::from_delimited_data;
+
+use csv::Trim;
 
 #[derive(Clone)]
 pub struct Ioxsql;
@@ -43,10 +46,26 @@ impl Command for Ioxsql {
 
         println!("{:?}", sql_result);
 
+        let no_infer = false;
+        let noheaders = false;
+
+        let separator: char = ',';
+
+        let trim = Trim::None;
+
+        // let input = Value(String { val: "a,b,c\n1,2,10\n3,4,20\n", span: Span { start: 28605, end: 28611 } }, None);
+        let input = PipelineData::Value(Value::Nothing { span: call.head }, None);
+
+        let name = Span::new(0, 0);
+        let config = engine_state.get_config();
+
+        from_delimited_data(noheaders, no_infer, separator, trim, input, name, config)
+        /*
         Ok(PipelineData::Value(
             Value::Nothing { span: call.head },
             None,
         ))
+        */
     }
 
     fn examples(&self) -> Vec<Example> {
