@@ -54,7 +54,17 @@ impl Command for Ioxsql {
         let trim = Trim::None;
 
         // let input = Value(String { val: "a,b,c\n1,2,10\n3,4,20\n", span: Span { start: 28605, end: 28611 } }, None);
-        let input = PipelineData::Value(Value::Nothing { span: call.head }, None);
+
+        let input = PipelineData::Value(
+            Value::String {
+                val: "a,b,c\n1,2,10\n3,4,20\n".to_string(),
+                span: call.head,
+            },
+            None,
+        );
+
+        // This compiles and returns nothing
+        // let input = PipelineData::Value(Value::Nothing { span: call.head }, None);
 
         let name = Span::new(0, 0);
         let config = engine_state.get_config();
