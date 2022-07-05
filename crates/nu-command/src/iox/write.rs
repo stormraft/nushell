@@ -62,7 +62,7 @@ impl Command for Ioxwrite {
         /*
         let input = PipelineData::Value(
             Value::String {
-                val: sql_result.unwrap(),
+                val: nol_result.unwrap(),
                 span: call.head,
             },
             None,
@@ -102,35 +102,46 @@ impl Command for Ioxwrite {
     }
 }
 
-pub fn tokio_block_write(sql: &Spanned<String>) -> Result<String, std::io::Error> {
-    use influxdb_iox_client::{connection::Builder, repl::Repl};
+pub fn tokio_block_write(sql: &Spanned<String>) -> Result<usize, std::io::Error> {
+    //use influxdb_iox_client::{connection::Builder, repl::Repl};
+
+    use influxdb_iox_client::{connection::Builder, write::Client};
+
     let num_threads: Option<usize> = None;
     let tokio_runtime = get_runtime(num_threads)?;
 
-    let sql_result = tokio_runtime.block_on(async move {
+    let nol_result = tokio_runtime.block_on(async move {
         let connection = Builder::default()
             .build("http://127.0.0.1:8082")
             .await
             .expect("client should be valid");
 
-        let mut repl = Repl::new(connection);
+        let mut client = Client::new(connection);
 
         let dbname = std::env::var("INFLUXDB_IOX_CATALOG_DSN").unwrap();
+        // write a line of line procol data
+        let nol = client
+            .write_lp("bananas", "cpu,region=south user=50.32 20000000", 0)
+            .await
+            .expect("failed to write to IOx");
 
-        repl.use_database(dbname);
+        // let mut repl = Repl::new(connection);
+        // repl.use_database(dbname);
         // repl.use_database("postgresql:///iox_shared".to_string());
 
-        let _output_format = repl.set_output_format("csv");
+        //let _output_format = repl.set_output_format("csv");
 
+        /*
         let x = repl
             //.run_sql("select * from h2o_temperature".to_string())
             .run_sql(sql.item.to_string())
             .await
             .expect("run_sql");
-
+            */
         // println!("{:?}", x);
-        x
+        // x
+        nol
     });
 
-    Ok(sql_result)
+    Ok(nol_result)
 }
