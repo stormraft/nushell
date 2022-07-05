@@ -3,14 +3,16 @@ use nu_engine::CallExt;
 use nu_protocol::ast::Call;
 use nu_protocol::engine::{Command, EngineState, Stack};
 //use nu_protocol::IntoInterruptiblePipelineData;
+
+use nu_protocol::{
+    Category, Example, PipelineData, ShellError, Signature, Spanned, SyntaxShape, Value,
+};
+
+/*
 use nu_protocol::{
     Category, Example, PipelineData, ShellError, Signature, Span, Spanned, SyntaxShape, Value,
 };
-//use rand::prelude::SliceRandom;
-//use rand::thread_rng;
-use super::delimited::from_delimited_data;
-
-use csv::Trim;
+*/
 
 #[derive(Clone)]
 pub struct Ioxwrite;
@@ -23,9 +25,9 @@ impl Command for Ioxwrite {
     fn signature(&self) -> nu_protocol::Signature {
         Signature::build("ioxwrite")
             .required(
-                "query",
+                "data",
                 SyntaxShape::String,
-                "SQL to execute against the database",
+                "Line protocol string to write to Iox",
             )
             .category(Category::Filters)
     }
@@ -41,20 +43,23 @@ impl Command for Ioxwrite {
         call: &Call,
         _input: PipelineData,
     ) -> Result<PipelineData, ShellError> {
-        let sql: Spanned<String> = call.req(engine_state, stack, 0)?;
-        let sql_result = tokio_block_write(&sql);
+        let lp_data: Spanned<String> = call.req(engine_state, stack, 0)?;
+        let nol_result = tokio_block_write(&lp_data);
 
-        // println!("{:?}", sql_result);
+        println!("{:?}", nol_result);
 
+        /*
         let no_infer = false;
         let noheaders = false;
 
         let separator: char = ',';
 
         let trim = Trim::None;
+        */
 
         // let input = Value(String { val: "a,b,c\n1,2,10\n3,4,20\n", span: Span { start: 28605, end: 28611 } }, None);
 
+        /*
         let input = PipelineData::Value(
             Value::String {
                 val: sql_result.unwrap(),
@@ -62,6 +67,7 @@ impl Command for Ioxwrite {
             },
             None,
         );
+        */
 
         /* This works !!
         let input = PipelineData::Value(
@@ -76,16 +82,15 @@ impl Command for Ioxwrite {
         // This compiles and returns nothing
         // let input = PipelineData::Value(Value::Nothing { span: call.head }, None);
 
-        let name = Span::new(0, 0);
-        let config = engine_state.get_config();
+        // let name = Span::new(0, 0);
+        // let config = engine_state.get_config();
 
-        from_delimited_data(noheaders, no_infer, separator, trim, input, name, config)
-        /*
+        // from_delimited_data(noheaders, no_infer, separator, trim, input, name, config)
+
         Ok(PipelineData::Value(
             Value::Nothing { span: call.head },
             None,
         ))
-        */
     }
 
     fn examples(&self) -> Vec<Example> {
