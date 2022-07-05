@@ -102,7 +102,7 @@ impl Command for Ioxwrite {
     }
 }
 
-pub fn tokio_block_write(sql: &Spanned<String>) -> Result<usize, std::io::Error> {
+pub fn tokio_block_write(_sql: &Spanned<String>) -> Result<usize, std::io::Error> {
     //use influxdb_iox_client::{connection::Builder, repl::Repl};
 
     use influxdb_iox_client::{connection::Builder, write::Client};
@@ -112,16 +112,16 @@ pub fn tokio_block_write(sql: &Spanned<String>) -> Result<usize, std::io::Error>
 
     let nol_result = tokio_runtime.block_on(async move {
         let connection = Builder::default()
-            .build("http://127.0.0.1:8082")
+            .build("http://127.0.0.1:8081")
             .await
             .expect("client should be valid");
 
         let mut client = Client::new(connection);
 
-        let dbname = std::env::var("INFLUXDB_IOX_CATALOG_DSN").unwrap();
+        let _dbname = std::env::var("INFLUXDB_IOX_CATALOG_DSN").unwrap();
         // write a line of line procol data
         let nol = client
-            .write_lp("bananas", "cpu,region=south user=50.32 20000000", 0)
+            .write_lp("pears", "cpu,region=north user=50.32 20000000", 0)
             .await
             .expect("failed to write to IOx");
 
