@@ -42,7 +42,10 @@ impl Command for Ioxsql {
         _input: PipelineData,
     ) -> Result<PipelineData, ShellError> {
         let sql: Spanned<String> = call.req(engine_state, stack, 0)?;
-        let sql_result = tokio_block_sql(&sql);
+
+        let dbname = std::env::var("INFLUXDB_IOX_CATALOG_DSN").unwrap();
+
+        let sql_result = tokio_block_sql(&dbname, &sql);
 
         // println!("{:?}", sql_result);
 
@@ -97,7 +100,7 @@ impl Command for Ioxsql {
     }
 }
 
-pub fn tokio_block_sql(sql: &Spanned<String>) -> Result<String, std::io::Error> {
+pub fn tokio_block_sql(dbname: &String, sql: &Spanned<String>) -> Result<String, std::io::Error> {
     use influxdb_iox_client::{connection::Builder, repl::Repl};
     let num_threads: Option<usize> = None;
     let tokio_runtime = get_runtime(num_threads)?;
@@ -110,9 +113,7 @@ pub fn tokio_block_sql(sql: &Spanned<String>) -> Result<String, std::io::Error> 
 
         let mut repl = Repl::new(connection);
 
-        let dbname = std::env::var("INFLUXDB_IOX_CATALOG_DSN").unwrap();
-
-        repl.use_database(dbname);
+        repl.use_database(dbname.to_string());
         // repl.use_database("postgresql:///iox_shared".to_string());
 
         let _output_format = repl.set_output_format("csv");
