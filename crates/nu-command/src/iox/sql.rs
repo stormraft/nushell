@@ -55,10 +55,17 @@ impl Command for Ioxsql {
         let dbname = if let Some(name) = db {
             name
         } else {
-            "pears".to_string()
+            std::env::var("IOX_DBNAME").unwrap()
         };
 
         /*
+                let dbname = if let Some(name) = db {
+                    name
+                } else {
+                    "pears".to_string()
+                };
+
+
         let db: Option<String> = call.opt(engine_state, stack, 0).unwrap_or(None);
 
         let dbname = if let Some(name) = db {
