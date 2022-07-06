@@ -118,7 +118,7 @@ pub fn tokio_block_write(lp_data: &Spanned<String>) -> Result<usize, std::io::Er
 
         let mut client = Client::new(connection);
 
-        let _dbname = std::env::var("INFLUXDB_IOX_CATALOG_DSN").unwrap();
+        let _dbname_from_env = std::env::var("INFLUXDB_IOX_CATALOG_DSN").unwrap();
 
         let nol = client
             .write_lp("pears", lp_data.item.to_string(), 0)
