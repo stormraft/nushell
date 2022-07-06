@@ -27,6 +27,12 @@ impl Command for Ioxsql {
                 SyntaxShape::String,
                 "SQL to execute against the database",
             )
+            .named(
+                "dbname",
+                SyntaxShape::String,
+                "name of the database to search over",
+                Some('d'),
+            )
             .category(Category::Filters)
     }
 
@@ -42,8 +48,30 @@ impl Command for Ioxsql {
         _input: PipelineData,
     ) -> Result<PipelineData, ShellError> {
         let sql: Spanned<String> = call.req(engine_state, stack, 0)?;
+        let db: Option<String> = call.get_flag(engine_state, stack, "dbname")?;
 
-        let dbname = std::env::var("INFLUXDB_IOX_CATALOG_DSN").unwrap();
+        println!("{:?}", db);
+
+        let dbname = if let Some(name) = db {
+            name
+        } else {
+            "pears".to_string()
+        };
+
+        /*
+        let db: Option<String> = call.opt(engine_state, stack, 0).unwrap_or(None);
+
+        let dbname = if let Some(name) = db {
+            name
+        } else {
+            std::env::var("INFLUXDB_IOX_CATALOG_DSN").unwrap()
+        };
+        */
+
+        //println!("dbname = {:?}", dbname);
+
+        // let dbname = std::env::var("INFLUXDB_IOX_CATALOG_DSN").unwrap();
+        // let dbname = "pears".to_string();
 
         let sql_result = tokio_block_sql(&dbname, &sql);
 
