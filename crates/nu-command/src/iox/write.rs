@@ -29,6 +29,12 @@ impl Command for Ioxwrite {
                 SyntaxShape::String,
                 "Line protocol string to write to Iox",
             )
+            .named(
+                "dbname",
+                SyntaxShape::String,
+                "name of the database to search over",
+                Some('d'),
+            )
             .category(Category::Filters)
     }
 
@@ -44,7 +50,15 @@ impl Command for Ioxwrite {
         _input: PipelineData,
     ) -> Result<PipelineData, ShellError> {
         let lp_data: Spanned<String> = call.req(engine_state, stack, 0)?;
-        let nol_result = tokio_block_write(&lp_data);
+        let db: Option<String> = call.get_flag(engine_state, stack, "dbname")?;
+
+        let dbname = if let Some(name) = db {
+            name
+        } else {
+            std::env::var("IOX_DBNAME").unwrap()
+        };
+
+        let nol_result = tokio_block_write(&dbname, &lp_data);
 
         println!("{:?}", nol_result);
 
@@ -102,7 +116,10 @@ impl Command for Ioxwrite {
     }
 }
 
-pub fn tokio_block_write(lp_data: &Spanned<String>) -> Result<usize, std::io::Error> {
+pub fn tokio_block_write(
+    dbname: &String,
+    lp_data: &Spanned<String>,
+) -> Result<usize, std::io::Error> {
     //use influxdb_iox_client::{connection::Builder, repl::Repl};
 
     use influxdb_iox_client::{connection::Builder, write::Client};
@@ -118,10 +135,10 @@ pub fn tokio_block_write(lp_data: &Spanned<String>) -> Result<usize, std::io::Er
 
         let mut client = Client::new(connection);
 
-        let _dbname_from_env = std::env::var("INFLUXDB_IOX_CATALOG_DSN").unwrap();
+        // let _dbname_from_env = std::env::var("INFLUXDB_IOX_CATALOG_DSN").unwrap();
 
         let nol = client
-            .write_lp("pears", lp_data.item.to_string(), 0)
+            .write_lp(dbname.to_string(), lp_data.item.to_string(), 0)
             .await
             .expect("failed to write to IOx");
 
