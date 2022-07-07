@@ -64,11 +64,18 @@ impl Command for Ioxwrite {
     }
 
     fn examples(&self) -> Vec<Example> {
-        vec![Example {
-            description: "Shuffle rows randomly (execute it several times and see the difference)",
-            example: r#"echo [[version patch]; [1.0.0 false] [3.0.1 true] [2.0.0 false]] | shuffle"#,
-            result: None,
-        }]
+        vec![
+            Example {
+                description: "Write some line protocol data out to Iox using the bananas db",
+                example: r#"ioxwrite -d bananas "cpu,region=la user=955111599 222522"#,
+                result: None,
+            },
+            Example {
+                description: "Write some line protocol data out to Iox using the default db",
+                example: r#"ioxwrite "cpu,region=pa user=9599 222522"#,
+                result: None,
+            },
+        ]
     }
 }
 
@@ -88,8 +95,6 @@ pub fn tokio_block_write(
             .expect("client should be valid");
 
         let mut client = Client::new(connection);
-
-        // println!("dbname too = {:?}", dbname);
 
         let nol = client
             .write_lp(dbname.to_string(), lp_data.item.to_string(), 0)
