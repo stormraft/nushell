@@ -89,7 +89,7 @@ pub fn tokio_block_write(
 
         let mut client = Client::new(connection);
 
-        println!("dbname too = {:?}", dbname);
+        // println!("dbname too = {:?}", dbname);
 
         let nol = client
             .write_lp(dbname.to_string(), lp_data.item.to_string(), 0)
