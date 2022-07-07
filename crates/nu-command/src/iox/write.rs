@@ -51,6 +51,8 @@ impl Command for Ioxwrite {
             std::env::var("IOX_DBNAME").unwrap()
         };
 
+        println!("dbname = {:?}", dbname);
+
         let nol_result = tokio_block_write(&dbname, &lp_data);
 
         println!("{:?}", nol_result);
