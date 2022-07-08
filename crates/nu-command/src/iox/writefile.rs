@@ -57,6 +57,8 @@ impl Command for Ioxwritefile {
         let mut lp_data = String::new();
         let _ = file.read_to_string(&mut lp_data);
 
+        //println!("{:?}", lp_data);
+
         let nol_result = tokio_block_writefile(&dbname, &lp_data);
 
         println!("{:?}", nol_result);
