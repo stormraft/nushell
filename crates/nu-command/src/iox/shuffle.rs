@@ -1,7 +1,7 @@
 use nu_protocol::ast::Call;
 use nu_protocol::engine::{Command, EngineState, Stack};
 use nu_protocol::{
-    Category, Example, IntoInterruptiblePipelineData, PipelineData, ShellError, Signature,
+    Category, Example, IntoInterruptiblePipelineData, PipelineData, ShellError, Signature, Value,
 };
 use rand::prelude::SliceRandom;
 use rand::thread_rng;
@@ -27,10 +27,18 @@ impl Command for Ioxshuffle {
     fn run(
         &self,
         engine_state: &EngineState,
-        _stack: &mut Stack,
-        _call: &Call,
+        stack: &mut Stack,
+        call: &Call,
         input: PipelineData,
     ) -> Result<PipelineData, ShellError> {
+        let me = match stack.get_env_var(engine_state, "IOX_DBNAME") {
+            Some(v) => v,
+            None => Value::Nothing { span: call.head },
+        };
+
+        println!("me: {:?}\n\n\n\n", me);
+        println!("bye...");
+
         let _ = tokio_block02();
 
         let metadata = input.metadata();
