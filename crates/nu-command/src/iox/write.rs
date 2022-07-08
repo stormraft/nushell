@@ -1,4 +1,4 @@
-use super::util::get_runtime;
+use super::util::tokio_block_write;
 use nu_engine::CallExt;
 use nu_protocol::ast::Call;
 use nu_protocol::engine::{Command, EngineState, Stack};
@@ -77,32 +77,4 @@ impl Command for Ioxwrite {
             },
         ]
     }
-}
-
-pub fn tokio_block_write(
-    dbname: &String,
-    lp_data: &Spanned<String>,
-) -> Result<usize, std::io::Error> {
-    use influxdb_iox_client::{connection::Builder, write::Client};
-
-    let num_threads: Option<usize> = None;
-    let tokio_runtime = get_runtime(num_threads)?;
-
-    let nol_result = tokio_runtime.block_on(async move {
-        let connection = Builder::default()
-            .build("http://127.0.0.1:8081")
-            .await
-            .expect("client should be valid");
-
-        let mut client = Client::new(connection);
-
-        let nol = client
-            .write_lp(dbname.to_string(), lp_data.item.to_string(), 0)
-            .await
-            .expect("failed to write to IOx");
-
-        nol
-    });
-
-    Ok(nol_result)
 }
