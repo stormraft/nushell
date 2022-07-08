@@ -1,7 +1,7 @@
 use nu_protocol::ast::Call;
 use nu_protocol::engine::{Command, EngineState, Stack};
 use nu_protocol::{
-    Category, Example, IntoInterruptiblePipelineData, PipelineData, ShellError, Signature, Value,
+    Category, Example, IntoInterruptiblePipelineData, PipelineData, ShellError, Signature,
 };
 use rand::prelude::SliceRandom;
 use rand::thread_rng;
@@ -28,15 +28,38 @@ impl Command for Ioxshuffle {
         &self,
         engine_state: &EngineState,
         stack: &mut Stack,
-        call: &Call,
+        _call: &Call,
         input: PipelineData,
     ) -> Result<PipelineData, ShellError> {
-        let me = match stack.get_env_var(engine_state, "IOX_DBNAME") {
-            Some(v) => v,
-            None => Value::Nothing { span: call.head },
+        let me = stack
+            .get_env_var(engine_state, "IOX_DBNAME")
+            .map(|v| v.as_string().unwrap_or_default())
+            .filter(|v| !v.is_empty());
+
+        /*
+        let dbname = if let Some(name) = db {
+            name
+        } else {
+            std::env::var("IOX_DBNAME").unwrap()
         };
 
-        println!("me: {:?}\n\n\n\n", me);
+        */
+
+        let me1 = if let Some(env_name) = me {
+            env_name
+        } else {
+            "you need to throw an error if the environment variable does not exist".to_string()
+        };
+
+        println!("me1 {:?}", me1);
+
+        /*
+                let me = match stack.get_env_var(engine_state, "IOX_DBNAME") {
+                    Some(v) => v,
+                    None => Value::Nothing { span: call.head },
+                };
+        */
+        //println!("me: {:?}\n\n\n\n", me);
         println!("bye...");
 
         let _ = tokio_block02();
