@@ -32,7 +32,7 @@ impl Command for Ioxwritefile {
     }
 
     fn usage(&self) -> &str {
-        "Write data to the Iox Database."
+        "Write a line protocol file to the Iox Database."
     }
 
     fn run(
@@ -57,8 +57,6 @@ impl Command for Ioxwritefile {
         let mut lp_data = String::new();
         let _ = file.read_to_string(&mut lp_data);
 
-        //println!("{:?}", lp_data);
-
         let nol_result = tokio_block_writefile(&dbname, &lp_data);
 
         println!("{:?}", nol_result);
@@ -72,12 +70,12 @@ impl Command for Ioxwritefile {
     fn examples(&self) -> Vec<Example> {
         vec![
             Example {
-                description: "Write some line protocol data out to Iox using the bananas db",
+                description: "Write a line protocol data file out to Iox using the bananas db",
                 example: r#"ioxwrite -d bananas "cpu,region=la user=955111599 222522"#,
                 result: None,
             },
             Example {
-                description: "Write some line protocol data out to Iox using the default db",
+                description: "Write a line protocol data file out to Iox using the default db",
                 example: r#"ioxwrite "cpu,region=pa user=9599 222522"#,
                 result: None,
             },
