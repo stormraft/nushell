@@ -32,15 +32,7 @@ impl Command for Ioxshuffle {
         input: PipelineData,
     ) -> Result<PipelineData, ShellError> {
         let env = get_env_var_from_engine(stack, engine_state);
-        println!("env {:?}", env);
-
-        /*
-                let me = match stack.get_env_var(engine_state, "IOX_DBNAME") {
-                    Some(v) => v,
-                    None => Value::Nothing { span: call.head },
-                };
-        */
-        //println!("me: {:?}\n\n\n\n", me);
+        println!("env {:?}\n\n\n", env);
         println!("bye...");
 
         let _ = tokio_block02();

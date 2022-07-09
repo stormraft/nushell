@@ -108,15 +108,6 @@ pub fn get_env_var_from_engine(
         .map(|v| v.as_string().unwrap_or_default())
         .filter(|v| !v.is_empty());
 
-    /*
-    let dbname = if let Some(name) = db {
-    name
-    } else {
-    std::env::var("IOX_DBNAME").unwrap()
-    };
-
-    */
-
     let me1 = if let Some(env_name) = me {
         env_name
     } else {
