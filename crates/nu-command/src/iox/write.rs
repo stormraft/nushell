@@ -1,4 +1,4 @@
-use super::util::get_runtime;
+use super::util::{get_env_var_from_engine, get_runtime};
 use nu_engine::CallExt;
 use nu_protocol::ast::Call;
 use nu_protocol::engine::{Command, EngineState, Stack};
@@ -48,7 +48,7 @@ impl Command for Ioxwrite {
         let dbname = if let Some(name) = db {
             name
         } else {
-            std::env::var("IOX_DBNAME").unwrap()
+            get_env_var_from_engine(stack, engine_state, "IOX_DBNAME").unwrap()
         };
 
         println!("dbname = {:?}", dbname);
