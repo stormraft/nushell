@@ -104,16 +104,16 @@ pub fn get_env_var_from_engine(
     engine_state: &EngineState,
     env: &str,
 ) -> Result<String, ShellError> {
-    let me = stack
+    let result = stack
         .get_env_var(engine_state, env)
         .map(|v| v.as_string().unwrap_or_default())
         .filter(|v| !v.is_empty());
 
-    let me1 = if let Some(env_name) = me {
+    let result_env = if let Some(env_name) = result {
         env_name
     } else {
         "you need to throw an error if the environment variable does not exist".to_string()
     };
 
-    Ok(me1)
+    Ok(result_env)
 }
