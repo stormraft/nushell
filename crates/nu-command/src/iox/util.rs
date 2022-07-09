@@ -102,9 +102,10 @@ pub fn get_runtime(num_threads: Option<usize>) -> Result<Runtime, std::io::Error
 pub fn get_env_var_from_engine(
     stack: &mut Stack,
     engine_state: &EngineState,
+    env: &str,
 ) -> Result<String, ShellError> {
     let me = stack
-        .get_env_var(engine_state, "IOX_DBNAME")
+        .get_env_var(engine_state, env)
         .map(|v| v.as_string().unwrap_or_default())
         .filter(|v| !v.is_empty());
 

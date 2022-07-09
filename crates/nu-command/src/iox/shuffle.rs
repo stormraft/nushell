@@ -31,7 +31,7 @@ impl Command for Ioxshuffle {
         _call: &Call,
         input: PipelineData,
     ) -> Result<PipelineData, ShellError> {
-        let env = get_env_var_from_engine(stack, engine_state);
+        let env = get_env_var_from_engine(stack, engine_state, "IOX_DBNAME");
         println!("env {:?}\n\n\n", env);
         println!("bye...");
 
