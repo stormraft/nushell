@@ -6,7 +6,7 @@ use nu_protocol::{
 use rand::prelude::SliceRandom;
 use rand::thread_rng;
 
-use super::util::tokio_block02;
+use super::util::{get_env_var_from_engine, tokio_block02};
 
 #[derive(Clone)]
 pub struct Ioxshuffle;
@@ -31,27 +31,8 @@ impl Command for Ioxshuffle {
         _call: &Call,
         input: PipelineData,
     ) -> Result<PipelineData, ShellError> {
-        let me = stack
-            .get_env_var(engine_state, "IOX_DBNAME")
-            .map(|v| v.as_string().unwrap_or_default())
-            .filter(|v| !v.is_empty());
-
-        /*
-        let dbname = if let Some(name) = db {
-            name
-        } else {
-            std::env::var("IOX_DBNAME").unwrap()
-        };
-
-        */
-
-        let me1 = if let Some(env_name) = me {
-            env_name
-        } else {
-            "you need to throw an error if the environment variable does not exist".to_string()
-        };
-
-        println!("me1 {:?}", me1);
+        let env = get_env_var_from_engine(stack, engine_state);
+        println!("env {:?}", env);
 
         /*
                 let me = match stack.get_env_var(engine_state, "IOX_DBNAME") {

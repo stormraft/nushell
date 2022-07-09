@@ -1,3 +1,5 @@
+use nu_protocol::engine::{EngineState, Stack};
+use nu_protocol::ShellError;
 use tokio::runtime::{Builder, Runtime};
 
 pub fn tokio_block02() -> Result<(), std::io::Error> {
@@ -95,4 +97,31 @@ pub fn get_runtime(num_threads: Option<usize>) -> Result<Runtime, std::io::Error
             }
         }
     }
+}
+
+pub fn get_env_var_from_engine(
+    stack: &mut Stack,
+    engine_state: &EngineState,
+) -> Result<String, ShellError> {
+    let me = stack
+        .get_env_var(engine_state, "IOX_DBNAME")
+        .map(|v| v.as_string().unwrap_or_default())
+        .filter(|v| !v.is_empty());
+
+    /*
+    let dbname = if let Some(name) = db {
+    name
+    } else {
+    std::env::var("IOX_DBNAME").unwrap()
+    };
+
+    */
+
+    let me1 = if let Some(env_name) = me {
+        env_name
+    } else {
+        "you need to throw an error if the environment variable does not exist".to_string()
+    };
+
+    Ok(me1)
 }
